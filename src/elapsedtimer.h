@@ -49,7 +49,7 @@ private:
         unsigned short sec  = 0;
     };
 
-    QTime *timer;
+    QElapsedTimer *timer;
     void secsToHMS(unsigned int secs, timeStruct_t *ts);
     static const unsigned short MS_PER_SEC = 1000;
     static const unsigned short SECS_PER_MIN = 60;

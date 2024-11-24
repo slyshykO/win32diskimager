@@ -134,7 +134,7 @@ void MainWindow::loadSettings()
 void MainWindow::initializeHomeDir()
 {
     myHomeDir = QDir::homePath();
-    if (myHomeDir == NULL){
+    if (QDir(myHomeDir).exists()){
         myHomeDir = qgetenv("USERPROFILE");
     }
     /* Get Downloads the Windows way */
@@ -221,7 +221,7 @@ void MainWindow::on_tbBrowse_clicked()
     dialog.setNameFilter(fileType);
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setViewMode(QFileDialog::Detail);
-    dialog.setConfirmOverwrite(false);
+    dialog.setOption(QFileDialog::DontConfirmOverwrite);
     if (fileinfo.exists())
     {
         dialog.selectFile(fileLocation);
@@ -331,7 +331,7 @@ void MainWindow::on_bWrite_clicked()
             // build the drive letter as a const char *
             //   (without the surrounding brackets)
             QString qs = cboxDevice->currentText();
-            qs.replace(QRegExp("[\\[\\]]"), "");
+            qs.replace(QRegularExpression("[\\[\\]]"), ""); //TODO: check
             QByteArray qba = qs.toLocal8Bit();
             const char *ltr = qba.data();
             if (QMessageBox::warning(this, tr("Confirm overwrite"), tr("Writing to a physical device can corrupt the device.\n"
@@ -1139,7 +1139,7 @@ char FirstDriveFromMask (ULONG unitmask)
 
 // register to receive notifications when USB devices are inserted or removed
 // adapted from http://www.known-issues.net/qt/qt-detect-event-windows.html
-bool MainWindow::nativeEvent(const QByteArray &type, void *vMsg, long *result)
+bool MainWindow::nativeEvent(const QByteArray &type, void *vMsg, qintptr *result)
 {
     Q_UNUSED(type);
     MSG *msg = (MSG*)vMsg;

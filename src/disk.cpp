@@ -28,7 +28,7 @@
 #include <windows.h>
 #include <winioctl.h>
 #include "disk.h"
-#include "mainwindow.h"
+
 
 void ShowCriticalMessage(QString title, QString text)
 {
@@ -94,11 +94,12 @@ HANDLE getHandleOnFile(LPCWSTR filelocation, DWORD access)
         wchar_t *errormessage=NULL;
         ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0,
                          (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
+        QString fileloc = QString::fromUtf16((const char16_t *)filelocation);
         ShowCriticalMessage(
                 QObject::tr("File Error"),
-                QObject::tr("An error occurred when attempting to get a handle on the file.\n"
-                    "Error %1: %2").arg(GetLastError()).arg(errText));
+                QObject::tr("An error occurred when attempting to get a handle on the file `%1`.\n"
+                    "Error %2: %3").arg(fileloc).arg(GetLastError()).arg(errText));
         LocalFree(errormessage);
     }
     return hFile;
@@ -113,7 +114,7 @@ DWORD getDeviceID(HANDLE hVolume)
         wchar_t *errormessage=NULL;
         ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0,
                          (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Volume Error"),
                 QObject::tr("An error occurred when attempting to get information on volume.\n"
@@ -132,7 +133,7 @@ HANDLE getHandleOnDevice(int device, DWORD access)
     {
         wchar_t *errormessage=NULL;
         FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Device Error"),
                 QObject::tr("An error occurred when attempting to get a handle on the device.\n"
@@ -152,7 +153,7 @@ HANDLE getHandleOnVolume(int volume, DWORD access)
     {
         wchar_t *errormessage=NULL;
         FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Volume Error"),
                 QObject::tr("An error occurred when attempting to get a handle on the volume.\n"
@@ -171,7 +172,7 @@ bool getLockOnVolume(HANDLE handle)
     {
         wchar_t *errormessage=NULL;
         FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Lock Error"),
                 QObject::tr("An error occurred when attempting to lock the volume.\n"
@@ -190,7 +191,7 @@ bool removeLockOnVolume(HANDLE handle)
     {
         wchar_t *errormessage=NULL;
         FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Unlock Error"),
                 QObject::tr("An error occurred when attempting to unlock the volume.\n"
@@ -209,7 +210,7 @@ bool unmountVolume(HANDLE handle)
     {
         wchar_t *errormessage=NULL;
         FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Dismount Error"),
                 QObject::tr("An error occurred when attempting to dismount the volume.\n"
@@ -238,7 +239,7 @@ char *readSectorDataFromHandle(HANDLE handle, unsigned long long startsector, un
     {
         wchar_t *errormessage=NULL;
         FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Read Error"),
                 QObject::tr("An error occurred when attempting to read data from handle.\n"
@@ -266,7 +267,7 @@ bool writeSectorDataToHandle(HANDLE handle, char *data, unsigned long long start
     {
         wchar_t *errormessage=NULL;
         FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Write Error"),
                 QObject::tr("An error occurred when attempting to write data to handle.\n"
@@ -286,7 +287,7 @@ unsigned long long getNumberOfSectors(HANDLE handle, unsigned long long *sectors
     {
         wchar_t *errormessage=NULL;
         FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Device Error"),
                 QObject::tr("An error occurred when attempting to get the device's geometry.\n"
@@ -312,7 +313,7 @@ unsigned long long getFileSizeInSectors(HANDLE handle, unsigned long long sector
             // error
             wchar_t *errormessage=NULL;
             FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-            QString errText = QString::fromUtf16((const ushort *)errormessage);
+            QString errText = QString::fromUtf16((const char16_t *)errormessage);
             ShowCriticalMessage(
                     QObject::tr("File Error"),
                     QObject::tr("An error occurred while getting the file size.\n"
@@ -337,7 +338,7 @@ bool spaceAvailable(char *location, unsigned long long spaceneeded)
     {
         wchar_t *errormessage=NULL;
         FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-        QString errText = QString::fromUtf16((const ushort *)errormessage);
+        QString errText = QString::fromUtf16((const char16_t *)errormessage);
         ShowCriticalMessage(
                 QObject::tr("Free Space Error"),
                 QObject::tr("Failed to get the free space on drive %1.\n"
@@ -404,7 +405,7 @@ BOOL GetDisksProperty(HANDLE hDevice, PSTORAGE_DEVICE_DESCRIPTOR pDevDesc,
             retVal = false;
             wchar_t *errormessage=NULL;
             FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-            QString errText = QString::fromUtf16((const ushort *)errormessage);
+            QString errText = QString::fromUtf16((const char16_t *)errormessage);
             ShowCriticalMessage(
                     QObject::tr("File Error"),
                     QObject::tr("An error occurred while getting the device number.\n"
@@ -426,7 +427,7 @@ BOOL GetDisksProperty(HANDLE hDevice, PSTORAGE_DEVICE_DESCRIPTOR pDevDesc,
         {
             wchar_t *errormessage=NULL;
             FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-            QString errText = QString::fromUtf16((const ushort *)errormessage);
+            QString errText = QString::fromUtf16((const char16_t *)errormessage);
             ShowCriticalMessage(
                     QObject::tr("File Error"),
                     QObject::tr("An error occurred while querying the properties.\n"
@@ -498,14 +499,20 @@ bool checkDriveType(char *name, ULONG *pid, char* extra_info, int extra_len)
     PSTORAGE_DEVICE_DESCRIPTOR pDevDesc;
     DEVICE_NUMBER deviceInfo;
     bool retVal = false;
-    char *nameWithSlash;
-    char *nameNoSlash;
+    char *nameWithSlash = nullptr;
+    char *nameNoSlash = nullptr;
     int driveType;
     DWORD cbBytesReturned;
 
     // some calls require no tailing slash, some require a trailing slash...
     if ( !(slashify(name, &nameWithSlash, &nameNoSlash)) )
     {
+        if(nameWithSlash) {
+            free(nameWithSlash);
+        }
+        if(nameNoSlash) {
+            free(nameNoSlash);
+        }
         return(retVal);
     }
 
@@ -519,7 +526,7 @@ bool checkDriveType(char *name, ULONG *pid, char* extra_info, int extra_len)
         {
             wchar_t *errormessage=NULL;
             FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, GetLastError(), 0, (LPWSTR)&errormessage, 0, NULL);
-            QString errText = QString::fromUtf16((const ushort *)errormessage);
+            QString errText = QString::fromUtf16((const char16_t *)errormessage);
             ShowCriticalMessage(
                     QObject::tr("Volume Error"),
                     QObject::tr("An error occurred when attempting to get a handle on %3.\n"
@@ -564,8 +571,8 @@ bool checkDriveType(char *name, ULONG *pid, char* extra_info, int extra_len)
                     PARTITION_INFORMATION_EX partInfo;
 
                     offs += snprintf(extra_info, extra_len, "Disk%d.Part%d",
-                            deviceInfo.DeviceNumber, 
-                            deviceInfo.PartitionNumber);
+                            (int)deviceInfo.DeviceNumber,
+                            (int)deviceInfo.PartitionNumber);
 
                     if (DeviceIoControl(
                             hDevice,
